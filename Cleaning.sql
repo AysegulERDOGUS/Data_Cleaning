@@ -139,3 +139,15 @@ UPDATE Media_Data
 SET date_added = CONVERT (date,CAST(release_year as varchar) +'-01-01')
 WHERE date_added IS NULL OR date_added=''
 
+
+---The date_added column was reformatted from varchar to date for analysis.---
+
+UPDATE N_Customers 
+SET  membership_date=CONVERT(date,membership_date,101) 
+
+ALTER TABLE N_Customers
+ALTER COLUMN membership_date date
+
+
+
+
