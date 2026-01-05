@@ -24,6 +24,7 @@ To fix these problems, the following steps were applied:
     * Data in the wrong columns was fixed
 
 ✨ Results
+
 After these steps:
 
     * Data was separated and became more organized
