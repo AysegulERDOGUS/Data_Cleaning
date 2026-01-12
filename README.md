@@ -1,5 +1,5 @@
 
-# Project Goal
+📌Project Goal
 
 In this project, raw Netflix data that was not ready for analysis was cleaned, separated, and transformed into a structure that can be easily queried using SQL. The goal was to make fields that had multiple values, were inconsistent, or unorganized more clear, tidy, and suitable for analysis.
 
