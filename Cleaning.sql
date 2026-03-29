@@ -47,7 +47,7 @@ SELECT * FROM Netflix_table
 						genre_name VARCHAR(40), 
 						show_id VARCHAR(10) FOREIGN KEY(show_id) REFERENCES Media_Data(show_id) 
 						) 
-CREATE TABLE Director( 
+   CREATE TABLE Director( 
 						id INT IDENTITY(1,1) PRIMARY KEY, 
 						director_id INT , 
 						show_id VARCHAR(10) FOREIGN KEY (show_id) REFERENCES Media_Data(show_id), 
@@ -56,47 +56,47 @@ CREATE TABLE Director(
 
 ---Data was transferred to the relevant tables---
   
-INSERT INTO Casts(cast_id,cast_name,show_id) 
-SELECT DENSE_RANK() OVER( ORDER BY TRIM(Value)), 
-		TRIM(Value), 
-		show_id 
-FROM Media_Data 
-CROSS APPLY STRING_SPLIT(Casts,',') 
-	
-INSERT INTO Countries (country_id,country_name,show_id)  
-SELECT DENSE_RANK() OVER(ORDER BY TRIM(Value)), 
-		TRIM(Value) as Country, 
-		show_id  
-FROM Media_Data  
-CROSS APPLY STRING_SPLIT(country,',') 
-	
-INSERT INTO Genre (genre_id,genre_name,show_id) 
-SELECT DENSE_RANK() OVER (ORDER BY TRIM(Value)), 
-		TRIM(Value), 
-		show_id  
-FROM Media_Data 
-CROSS APPLY STRING_SPLIT(listed_in,',') 
-	
-INSERT INTO Director (director_id,show_id ,director_name) 
-SELECT DENSE_RANK() OVER (ORDER BY TRIM(Value)), 
-		show_id , 
-		TRIM(Value) 
-FROM Media_Data 
-CROSS APPLY STRING_SPLIT(director,',')
+	INSERT INTO Casts(cast_id,cast_name,show_id) 
+	SELECT DENSE_RANK() OVER( ORDER BY TRIM(Value)), 
+			TRIM(Value), 
+			show_id 
+	FROM Media_Data 
+	CROSS APPLY STRING_SPLIT(Casts,',') 
+		
+	INSERT INTO Countries (country_id,country_name,show_id)  
+	SELECT DENSE_RANK() OVER(ORDER BY TRIM(Value)), 
+			TRIM(Value) as Country, 
+			show_id  
+	FROM Media_Data  
+	CROSS APPLY STRING_SPLIT(country,',') 
+		
+	INSERT INTO Genre (genre_id,genre_name,show_id) 
+	SELECT DENSE_RANK() OVER (ORDER BY TRIM(Value)), 
+			TRIM(Value), 
+			show_id  
+	FROM Media_Data 
+	CROSS APPLY STRING_SPLIT(listed_in,',') 
+		
+	INSERT INTO Director (director_id,show_id ,director_name) 
+	SELECT DENSE_RANK() OVER (ORDER BY TRIM(Value)), 
+			show_id , 
+			TRIM(Value) 
+	FROM Media_Data 
+	CROSS APPLY STRING_SPLIT(director,',')
 	
 
 ---Columns with multiple values were deleted from the old table---
-
- ALTER TABLE Media_Data
-DROP COLUMN director,
-			casts,
-			listed_in,
-			country
+	
+	 ALTER TABLE Media_Data
+	 DROP COLUMN director,
+				casts,
+				listed_in,
+				country
 
 
 ---Leading spaces in text were removed using the TRIM function.---
 
- UPDATE Media_Data
+  UPDATE Media_Data
   SET show_id = TRIM(show_id),
 	 type = TRIM(type),
 	 title = TRIM(title) ,
@@ -107,17 +107,17 @@ DROP COLUMN director,
 
 ---Missing and NULL values were checked---
 
-SELECT *
-FROM Media_Data
-WHERE 
-  show_id IS NULL OR show_id = '' OR
-  type IS NULL OR type = '' OR
-  title IS NULL OR  title = '' OR
-  date_added IS NULL OR date_added = '' OR
-  release_year IS NULL OR release_year = '' OR
-  rating IS NULL OR rating = '' OR
-  duration IS NULL OR duration = '' OR
-  description IS NULL OR description = ''
+	SELECT *
+	FROM Media_Data
+	WHERE 
+	  show_id IS NULL OR show_id = '' OR
+	  type IS NULL OR type = '' OR
+	  title IS NULL OR  title = '' OR
+	  date_added IS NULL OR date_added = '' OR
+	  release_year IS NULL OR release_year = '' OR
+	  rating IS NULL OR rating = '' OR
+	  duration IS NULL OR duration = '' OR
+	  description IS NULL OR description = ''
 
 
 ---Incorrectly transferred data was moved to the correct columns.---
@@ -133,18 +133,18 @@ WHERE
 
 ---Year data was transferred to rows with missing year values.---
   
-UPDATE Media_Data
-SET date_added = CONVERT (date,CAST(release_year as varchar) +'-01-01')
-WHERE date_added IS NULL OR date_added=''
-
-
----The date_added column was reformatted from varchar to date for analysis.---
-
-UPDATE N_Customers 
-SET  membership_date=CONVERT(date,membership_date,101) 
-
-ALTER TABLE N_Customers
-ALTER COLUMN membership_date date
+	UPDATE Media_Data
+	SET date_added = CONVERT (date,CAST(release_year as varchar) +'-01-01')
+	WHERE date_added IS NULL OR date_added=''
+	
+	
+	---The date_added column was reformatted from varchar to date for analysis.---
+	
+	UPDATE N_Customers 
+	SET  membership_date=CONVERT(date,membership_date,101) 
+	
+	ALTER TABLE N_Customers
+	ALTER COLUMN membership_date date
 
 
 
