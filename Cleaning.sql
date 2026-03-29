@@ -18,74 +18,72 @@ CREATE TABLE Media_Data(
 				)
 
 
-INSERT INTO Media_Data(  show_id,
-	type   ,
-	title	,
-	director  ,
-	casts	,
-	country ,
-	date_added	,
-	release_year ,
-	rating	,
-	duration ,
-	listed_in ,
-	description 
- )
-SELECT * FROM Netflix_table
+INSERT INTO Media_Data 
+SELECT * FROM Netflix_table 
 
 ---Columns with multiple values were moved to separate tables.---
   
-	CREATE TABLE Casts(
-		cast_id INT IDENTITY(1,1) PRIMARY KEY,
-		show_id VARCHAR(10) FOREIGN KEY (show_id) REFERENCES Media_Data(show_id),
-		cast_name VARCHAR(90)
-			         )
-
-CREATE TABLE Countries (
-		country_id INT IDENTITY(1,1) PRIMARY KEY,
-		country_name VARCHAR(20) ,
-		show_id VARCHAR(10) FOREIGN KEY (show_id) REFERENCES Media_Data(show_İd),
-   )
-
-CREATE TABLE Genre (
-		genre_id int IDENTITY(1,1) PRIMARY KEY,
-		genre_name VARCHAR(40),
-		show_id VARCHAR(10) FOREIGN KEY(show_id) REFERENCES Media_Data(show_id)
-			         )
-
-CREATE TABLE Director(
-		director_id INT IDENTITY(1,1) PRIMARY KEY,
-		show_id VARCHAR(10) FOREIGN KEY (show_id) REFERENCES Media_Data(show_id),
-		director_name VARCHAR(90)
-)
-
+	CREATE TABLE Casts( 
+						id INT IDENTITY(1,1) PRIMARY KEY, 
+						cast_id INT , 
+						cast_name VARCHAR(90), 
+						show_id VARCHAR(10) FOREIGN KEY (show_id) REFERENCES Media_Data(show_id) 
+						) 
+   CREATE TABLE Countries ( 
+						country_id INT IDENTITY(1,1) PRIMARY KEY, 
+						country_name VARCHAR(20) , 
+						show_id VARCHAR(10) FOREIGN KEY (show_id) REFERENCES Media_Data(show_İd), 
+						) 
+   CREATE TABLE Countries (  
+						id INT IDENTITY(1,1) PRIMARY KEY 
+						country_id INT, 
+						country_name VARCHAR(50), 
+						show_id VARCHAR(10), 
+						FOREIGN KEY (show_id) REFERENCES Media_Data(show_id) 
+						) 
+   CREATE TABLE Genre( 
+						id INT IDENTITY(1,1) PRIMARY KEY, 
+						genre_id INT, 
+						genre_name VARCHAR(40), 
+						show_id VARCHAR(10) FOREIGN KEY(show_id) REFERENCES Media_Data(show_id) 
+						) 
+CREATE TABLE Director( 
+						id INT IDENTITY(1,1) PRIMARY KEY, 
+						director_id INT , 
+						show_id VARCHAR(10) FOREIGN KEY (show_id) REFERENCES Media_Data(show_id), 
+						director_name VARCHAR(90) 
+						) 
 
 ---Data was transferred to the relevant tables---
   
-INSERT INTO Casts (cast_name ,show_id)
-SELECT DISTINCT TRIM(value) AS Cast, show_id
-FROM Media_Data
-CROSS APPLY STRING_SPLIT(casts,',')
-ORDER BY show_id ASC
-
-
-INSERT INTO Countries(country_name,show_id)
-SELECT DISTINCT TRIM(Value) AS Country ,show_id
-FROM Media_Data
-CROSS APPLY STRING_SPLIT(country,',')
-
-
-INSERT INTO Genre(genre_name,show_id)
-SELECT DISTINCT TRIM(VALUE) AS Genre, show_id
-FROM Media_Data
-CROSS APPLY STRING_SPLIT(listed_in,',')
-
-
-INSERT INTO Director(director_name,show_id)
-SELECT DISTINCT TRIM(Value) AS Director_name, show_id 
-FROM Media_Data
+INSERT INTO Casts(cast_id,cast_name,show_id) 
+SELECT DENSE_RANK() OVER( ORDER BY TRIM(Value)), 
+		TRIM(Value), 
+		show_id 
+FROM Media_Data 
+CROSS APPLY STRING_SPLIT(Casts,',') 
+	
+INSERT INTO Countries (country_id,country_name,show_id)  
+SELECT DENSE_RANK() OVER(ORDER BY TRIM(Value)), 
+		TRIM(Value) as Country, 
+		show_id  
+FROM Media_Data  
+CROSS APPLY STRING_SPLIT(country,',') 
+	
+INSERT INTO Genre (genre_id,genre_name,show_id) 
+SELECT DENSE_RANK() OVER (ORDER BY TRIM(Value)), 
+		TRIM(Value), 
+		show_id  
+FROM Media_Data 
+CROSS APPLY STRING_SPLIT(listed_in,',') 
+	
+INSERT INTO Director (director_id,show_id ,director_name) 
+SELECT DENSE_RANK() OVER (ORDER BY TRIM(Value)), 
+		show_id , 
+		TRIM(Value) 
+FROM Media_Data 
 CROSS APPLY STRING_SPLIT(director,',')
-
+	
 
 ---Columns with multiple values were deleted from the old table---
 
